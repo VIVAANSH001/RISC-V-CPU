@@ -5,9 +5,9 @@ module traffic_light(input clk , rst , output reg red , green ,yellow);
 
 // making readable states
 
-parameter RED=2'b00;
-parameter GREEN=2'b01;
-parameter YELLOW=2'b10;
+localparam RED=2'b00;
+localparam GREEN=2'b01;
+localparam YELLOW=2'b10;
 
 reg [3:0] count , next_count;
 reg [1:0] state, next_state;

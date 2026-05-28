@@ -5,10 +5,10 @@ module sequence_detector(input clk , rst ,one , output reg detect);
 
 //giving states easy names
 
-parameter S0=2'b00; // when no detect
-parameter S1=2'b01; // when we have '1'
-parameter S2=2'b10; // when we have '11'
-parameter S3=2'b11; // when we have '110'
+localparam S0=2'b00; // when no detect
+localparam S1=2'b01; // when we have '1'
+localparam S2=2'b10; // when we have '11'
+localparam S3=2'b11; // when we have '110'
 
 reg [1:0] state , next_state;
 
