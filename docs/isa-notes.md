@@ -77,3 +77,28 @@
 
 ### Key things that connect all the types
 - The opcode is always at [6:0], the rs1 is always at [19:15] and the rs2 is always at [24:20].
+
+## DAY 17: R-type Instructions
+
+### What are R-type instructions?
+- R-type instructions are register to register , there are a total of 10 of them in RV32I, they include:
+- ADD: adds two registers
+- SUB: subtracts rs2 from rs1
+- AND: bitwise AND of two registers
+- OR: bitwise OR of two registers
+- XOR: bitwise XOR of two registers
+- SLL: shifts rs1 left by rs2 amount, fills with zeros. Works the same for signed and unsigned.
+- SRL: shifts rs1 right by rs2 amount, fills with zeros. It is intended for unsigned numbers.
+- SRA: shifts rs1 right by rs2 amount, fills with sign bit. It preserves sign so it is intended for signed numbers.
+- SLT: rd = 1 if rs1 < rs2 (signed), else 0
+- SLTU: rd = 1 if rs1 < rs2 (unsigned), else 0
+- Since they are all of the same type of instructions they all have the same opcode `0110011` the only thing that changes is the funct3 and funct7 and this helps in distinguishing between them.
+
+### How exactly do funct3 and funct7 work?
+- funct3 basically helps in identifying most of the instructions by grouping them into families but funct7 is needed for 2 pairs of the instructions including ADD/SUB and SRL/SRA. These pairs have the same opcode and funct3 only funct7 differs, for ADD/SRL the 30th bit is 0 while for SUB/SRA it is 1.
+- Every other instruction has a unique funct3 and funct7 for them is all zeroes.
+
+### What did you build?
+- To show what I learnt I built a 32-bit RV32I ALU which handles all 10 R-type instructions using Verilog.
+- Made the right use of `$signed()` for SLT and SRA do get the right signed behaviour.
+- Made the use of a zero output flag as well when the result of the ALU is zero.
