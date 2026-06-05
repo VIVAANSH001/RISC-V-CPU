@@ -102,3 +102,46 @@
 - To show what I learnt I built a 32-bit RV32I ALU which handles all 10 R-type instructions using Verilog.
 - Made the right use of `$signed()` for SLT and SRA do get the right signed behaviour.
 - Made the use of a zero output flag as well when the result of the ALU is zero.
+
+## DAY 18 : I-type Instructions
+
+### What are I-type instructions?
+- These are called immediate instructions they work exactly like the R-type instructions the only difference being the fact that rather than using 2 registers they make use of one register and one immediate value.
+- ADDI: adds an immediate to a register value
+- ANDI: bitwise AND of a register and an immediate
+- ORI: bitwise OR of a register and an immediate
+- XORI: bitwise XOR of a register and an immediate
+- SLLI: shifts rs1 left by immediate amount, fills with zeros. Works the same for signed and unsigned.
+- SRLI: shifts rs1 right by immediate amount, fills with zeros. It is intended for unsigned numbers.
+- SRAI: shifts rs1 right by immediate amount, fills with sign bit. It preserves sign so it is intended for signed numbers.
+- SLTI: rd = 1 if rs1 < immediate (signed), else 0
+- SLTIU: rd = 1 if rs1 < immediate (unsigned), else 0 (remember the immediate here is still **sign extended** first and then used for comparison)
+- They all share the same opcode which is `0010011` the immediate in all these cases is a 12 bit value which is sign extended to 32 bits when it is used in the operation. But there are expceptions that I will be getting to soon. Another thing is that there is no funct7 for these instructions and no rs2 as we are using the immediate.
+- Also there is no such thing as SUBI as you can use ADDI with a negative imemdiate for subtraction thus RISC-V intentionally doesn't implement it as its not needed.
+
+### Difference for I-type shifts
+- I-type shifts are different see the thing is for shifting you only need 5 bits as thats the max shift you can do for a 32 bit value after that it is always all zeroes. Thus, the immediate for shift is divided with the upper 7 bits being `0000000` for the SLLI and SRLI and `0100000` for the SRAI , the one for SRAI is needed as it shares the funct3 and opcode with SRLI so this is the only point of distinguishing between SRAI and SRLI and the lower 5 bits for the immediate is for the actual shift operation. Thus, this is also why sign extension does not apply for the shift instructions as the top 7 bits are needed for something else and the lower 5 is the only ones we are working with so there is no 12 or 32 bit sign extension.
+
+### What is masking?
+- The ANDI , XORI and the ORI can be used for masking meaning manipulating your register values to your liking so in the case for ANDI using of zeroes removes those bits and only the bits with 1 will allow the value to pass through , for ORI using 1 forces the bits to 1 and using 0 allows the original bits to pass through , lastly XORI using 1 causes the bits to switch while 0 allows them to pass through this is how you can use these bitwise operations to your advantage.
+
+### Hand Encoding Practice
+
+**1. `ADDI x1, x0, -1`**
+- imm = -1 --> `111111111111`
+- rs1 = x0 --> `00000`
+- funct3 = ADDI --> `000`
+- rd = x1 --> `00001`
+- opcode = `0010011`
+- Full: `1111 1111 1111 0000 0000 0000 1001 0011`
+- Hex: `0xFFF00093`
+
+** USING THESE STEPS I SOLVED THE FOLLOWING: **
+
+**2. `ANDI x4, x4, 255` --> `0x0FF27213`**
+
+**3. `SLTI x6, x2, 100` --> `0x06412313`**
+
+**4. `SLLI x7, x1, 3` --> `0x00309393`**
+
+**5. `SRAI x8, x7, 2` --> `0x4023D413`**
